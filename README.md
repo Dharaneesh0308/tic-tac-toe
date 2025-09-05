@@ -29,19 +29,7 @@ Includes winner detection, draw check, and restart option.
 5. First player to align 3 marks wins!  
 6. Use **Restart** button to play again.  
 
----
 
-## 📷 Screenshots  
-
-### Login Page  
-![Login Screenshot](screenshot-login.png)  
-
-### Game Board  
-![Game Screenshot](screenshot-game.png)  
-
-*(Place screenshots in project folder and update names if needed)*  
-
----
 
 ## 🌐 Live Demo  
 
