@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tic-Tac-Toe Multiplayer & AI - Raindrops & Interactive Bubbles</title>
+  <style>
+    :root {
+      --bg-color: #121212;
+      --text-color: #eee;
+      --primary-color: #ffa500;
+      --primary-glow: #ffb733;
+      --cell-bg: #222;
+      --cell-bg-hover: #333;
+      --cell-shadow-inset1: inset 3px 3px 8px #000a;
+      --cell-shadow-inset2: inset -3px -3px 8px #333;
+      --button-bg: #ffa500;
+      --button-bg-hover: #ffb733;
+      --button-shadow: 0 4px 10px #ff9900bb;
+      --status-shadow: 0 0 6px #ffa500aa;
+      --winning-bg: #ffa500;
+      --winning-shadow1: 0 0 20px 6px #ffa500cc;
+      --winning-shadow2: inset 0 0 15px 3px #ffb733cc;
+      --winning-shadow-pulse1: 0 0 30px 12px #ffbb33ee;
+      --winning-shadow-pulse2: inset 0 0 25px 6px #ffc966ee;
+
+      --bubble-color: rgba(255, 165, 0, 0.25);
+      --bubble-color-dark: rgba(255, 165, 0, 0.15);
+
+      --raindrop-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Ocean Blue Theme */
+    [data-theme="ocean"] {
+      --bg-color: #001f3f;
+      --text-color: #d0e7ff;
+      --primary-color: #00bcd4;
+      --primary-glow: #00e5ff;
+      --cell-bg: #003f7f;
+      --cell-bg-hover: #005f9f;
+      --cell-shadow-inset1: inset 3px 3px 8px #001f3f;
+      --cell-shadow-inset2: inset -3px -3px 8px #004f7f;
+      --button-bg: #00bcd4;
+      --button-bg-hover: #00e5ff;
+      --button-shadow: 0 4px 10px #00a1b0bb;
+      --status-shadow: 0 0 6px #00e5ffaa;
+      --winning-bg: #00bcd4;
+      --winning-shadow1: 0 0 20px 6px #00d0ffcc;
+      --winning-shadow2: inset 0 0 15px 3px #00e5ffcc;
+      --winning-shadow-pulse1: 0 0 30px 12px #00f4ffee;
+      --winning-shadow-pulse2: inset 0 0 25px 6px #00fbffee;
+
+      --bubble-color: rgba(0, 188, 212, 0.3);
+      --bubble-color-dark: rgba(0, 188, 212, 0.15);
+
+      --raindrop-color: rgba(200, 230, 255, 0.2);
+    }
+
+    /* Dark Purple Theme */
+    [data-theme="purple"] {
+      --bg-color: #1e003e;
+      --text-color: #f0d8ff;
+      --primary-color: #d400b6;
+      --primary-glow: #ff00ff;
+      --cell-bg: #3a006e;
+      --cell-bg-hover: #5a008e;
+      --cell-shadow-inset1: inset 3px 3px 8px #1e003e;
+      --cell-shadow-inset2: inset -3px -3px 8px #40007e;
+      --button-bg: #d400b6;
+      --button-bg-hover: #ff00ff;
+      --button-shadow: 0 4px 10px #b000a0bb;
+      --status-shadow: 0 0 6px #ff00ffaa;
+      --winning-bg: #d400b6;
+      --winning-shadow1: 0 0 20px 6px #ff33ffcc;
+      --winning-shadow2: inset 0 0 15px 3px #ff66ffcc;
+      --winning-shadow-pulse1: 0 0 30px 12px #ff66ffee;
+      --winning-shadow-pulse2: inset 0 0 25px 6px #ff99ffee;
+
+      --bubble-color: rgba(212, 0, 182, 0.3);
+      --bubble-color-dark: rgba(212, 0, 182, 0.15);
+
+      --raindrop-color: rgba(220, 150, 255, 0.15);
+    }
+
+    /* Dark Theme */
+    [data-theme="dark"] {
+      --bg-color: #0d1117;
+      --text-color: #c9d1d9;
+      --primary-color: #58a6ff;
+      --primary-glow: #79c0ff;
+      --cell-bg: #161b22;
+      --cell-bg-hover: #21262d;
+      --cell-shadow-inset1: inset 3px 3px 8px #0a0f15;
+      --cell-shadow-inset2: inset -3px -3px 8px #252a32;
+      --button-bg: #2389ff;
+      --button-bg-hover: #79c0ff;
+      --button-shadow: 0 4px 10px #1b6cffbb;
+      --status-shadow: 0 0 6px #79c0ffaa;
+      --winning-bg: #2389ff;
+      --winning-shadow1: 0 0 20px 6px #58a6ffcc;
+      --winning-shadow2: inset 0 0 15px 3px #79c0ffcc;
+      --winning-shadow-pulse1: 0 0 30px 12px #a3c9ffee;
+      --winning-shadow-pulse2: inset 0 0 25px 6px #b9d1ffee;
+
+      --bubble-color: rgba(88, 166, 255, 0.25);
+      --bubble-color-dark: rgba(88, 166, 255, 0.15);
+
+      --raindrop-color: rgba(150, 200, 255, 0.15);
+    }
+
+    /* Light Theme */
+    [data-theme="light"] {
+      --bg-color: #f7f7f7;
+      --text-color: #222;
+      --primary-color: #ff6600;
+      --primary-glow: #ff7f32;
+      --cell-bg: #fff;
+      --cell-bg-hover: #eee;
+      --cell-shadow-inset1: inset 3px 3px 8px #ccc;
+      --cell-shadow-inset2: inset -3px -3px 8px #eee;
+      --button-bg: #ff6600;
+      --button-bg-hover: #ff7f32;
+      --button-shadow: 0 4px 10px #d05a00bb;
+      --status-shadow: 0 0 6px #ff7f32aa;
+      --winning-bg: #ff6600;
+      --winning-shadow1: 0 0 20px 6px #ff7f32cc;
+      --winning-shadow2: inset 0 0 15px 3px #ff9933cc;
+      --winning-shadow-pulse1: 0 0 30px 12px #ff9f4fee;
+      --winning-shadow-pulse2: inset 0 0 25px 6px #ffb25fee;
+
+      --bubble-color: rgba(255, 102, 0, 0.25);
+      --bubble-color-dark: rgba(255, 102, 0, 0.15);
+
+      --raindrop-color: rgba(180, 100, 40, 0.15);
+    }
+
+    /* Basic resets and layout */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+      user-select: none;
+      transition: background 0.5s ease, color 0.5s ease;
+      position: relative;
+      overflow-x: hidden;
+    }
+    h1 {
+      margin-bottom: 5px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-shadow: 0 0 8px var(--primary-glow);
+      transition: text-shadow 0.4s ease;
+      z-index: 1;
+      position: relative;
+    }
+
+    #modeSelector {
+      margin-bottom: 10px;
+      z-index: 1;
+      position: relative;
+    }
+
+    #themeButtons {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+      z-index: 1;
+      position: relative;
+    }
+
+    #themeButtons button {
+      background: var(--cell-bg);
+      color: var(--text-color);
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--cell-shadow-inset1), var(--cell-shadow-inset2);
+      transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+      user-select: none;
+    }
+    #themeButtons button:hover:not(.active) {
+      background: var(--cell-bg-hover);
+      transform: scale(1.05);
+    }
+    #themeButtons button.active {
+      background: var(--primary-color);
+      color: var(--bg-color);
+      box-shadow: 0 0 15px 3px var(--primary-glow);
+      transform: scale(1.1);
+    }
+
+    #status {
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+      min-height: 1.5em;
+      color: var(--primary-color);
+      text-shadow: var(--status-shadow);
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+      z-index: 1;
+      position: relative;
+    }
+    #board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 12px;
+      transition: background 0.4s ease;
+      z-index: 1;
+      position: relative;
+    }
+    .cell {
+      background: var(--cell-bg);
+      border-radius: 16px;
+      box-shadow: var(--cell-shadow-inset1), var(--cell-shadow-inset2);
+      font-size: 3.5rem;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        transform 0.15s ease;
+      user-select: none;
+    }
+    .cell:hover {
+      background: var(--cell-bg-hover);
+      box-shadow:
+        0 0 12px 2px var(--primary-glow),
+        var(--cell-shadow-inset1),
+        var(--cell-shadow-inset2);
+    }
+    .cell:focus-visible {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+    .cell.placed {
+      animation: pop-in 0.3s ease forwards;
+    }
+    .cell.winning {
+      animation: pulse-glow 1.4s ease infinite alternate;
+      color: var(--bg-color);
+      background: var(--winning-bg);
+      font-weight: 900;
+      box-shadow:
+        var(--winning-shadow1),
+        var(--winning-shadow2);
+    }
+
+    @keyframes pop-in {
+      0% {
+        transform: scale(0.6);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulse-glow {
+      0% {
+        box-shadow:
+          var(--winning-shadow1),
+          var(--winning-shadow2);
+        background: var(--winning-bg);
+      }
+      100% {
+        box-shadow:
+          var(--winning-shadow-pulse1),
+          var(--winning-shadow-pulse2);
+        background: var(--primary-color);
+      }
+    }
+
+    #controls {
+      margin-top: 20px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      z-index: 1;
+      position: relative;
+    }
+    button {
+      background: var(--button-bg);
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-weight: 700;
+      color: var(--bg-color);
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: var(--button-shadow);
+      user-select: none;
+    }
+    button:hover {
+      background: var(--button-bg-hover);
+      transform: scale(1.05);
+    }
+    button:active {
+      transform: scale(0.95);
+    }
+    #scoreboard {
+      margin-top: 20px;
+      font-size: 1rem;
+      display: flex;
+      gap: 40px;
+      z-index: 1;
+      position: relative;
+    }
+    #scoreboard div {
+      background: var(--cell-bg);
+      padding: 14px 26px;
+      border-radius: 16px;
+      box-shadow: var(--cell-shadow-inset1), var(--cell-shadow-inset2);
+      min-width: 110px;
+      text-align: center;
+      user-select: none;
+    }
+    @media (max-width: 400px) {
+      #board {
+        grid-template-columns: repeat(3, 80px);
+        grid-template-rows: repeat(3, 80px);
+        gap: 10px;
+      }
+      .cell {
+        font-size: 3rem;
+        border-radius: 14px;
+      }
+      button {
+        padding: 10px 22px;
+      }
+      #scoreboard div {
+        min-width: 90px;
+        padding: 12px 18px;
+      }
+    }
+
+    /* Floating bubbles container */
+    #bubbles {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none; /* We'll toggle this for bubbles */
+      overflow: hidden;
+      z-index: 0;
+      user-select: none;
+    }
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background-color: var(--bubble-color);
+      opacity: 0.15;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+      filter: drop-shadow(0 0 3px var(--bubble-color-dark));
+      pointer-events: auto; /* allow interaction */
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      cursor: pointer;
+      user-select: none;
+      z-index: 1;
+    }
+    .bubble:hover {
+      transform: scale(1.4);
+      opacity: 0.4;
+      filter: drop-shadow(0 0 7px var(--bubble-color-dark));
+      z-index: 10;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .bubble.popping {
+      animation: popScaleFade 0.4s ease forwards !important;
+      pointer-events: none;
+    }
+    @keyframes popScaleFade {
+      0% {
+        transform: scale(1);
+        opacity: 0.4;
+      }
+      100% {
+        transform: scale(2.5);
+        opacity: 0;
+      }
+    }
+
+    /* Raindrop container */
+    #raindrops {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+      user-select: none;
+    }
+
+    .raindrop {
+      position: absolute;
+      bottom: 100%;
+      width: 2px;
+      height: 15px;
+      background: var(--raindrop-color);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation-name: fall, sway;
+      animation-timing-function: linear, ease-in-out;
+      animation-iteration-count: infinite, infinite;
+      animation-direction: normal, alternate;
+      filter: drop-shadow(0 0 2px var(--raindrop-color));
+      user-select: none;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.4;
+      }
+      90% {
+        opacity: 0.4;
+      }
+      100% {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+    }
+
+    @keyframes sway {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(10px);
+      }
+    }
+
+  </style>
+</head>
+<body data-theme="default">
+
+  <h1>Tic-Tac-Toe</h1>
+
+  <div id="modeSelector" role="radiogroup" aria-label="Game Mode">
+    <label><input type="radio" name="mode" value="single" checked /> Single Player (vs AI)</label>
+    <label><input type="radio" name="mode" value="multi" /> Multiplayer</label>
+  </div>
+
+  <div id="themeButtons" role="group" aria-label="Theme Selection">
+    <button data-theme="default" class="active" aria-pressed="true">Default</button>
+    <button data-theme="dark" aria-pressed="false">Dark</button>
+    <button data-theme="light" aria-pressed="false">Light</button>
+    <button data-theme="ocean" aria-pressed="false">Ocean</button>
+    <button data-theme="purple" aria-pressed="false">Purple</button>
+  </div>
+
+  <div id="status" aria-live="polite" aria-atomic="true">Your turn (X)</div>
+
+  <div id="board" role="grid" aria-label="Tic Tac Toe Board"></div>
+
+  <div id="controls">
+    <button id="restartBtn" aria-label="Restart game">Restart Game</button>
+  </div>
+
+  <div id="scoreboard" aria-label="Scoreboard">
+    <div>Player X: <span id="playerXScore">0</span></div>
+    <div>Player O: <span id="playerOScore">0</span></div>
+    <div>Draws: <span id="drawScore">0</span></div>
+  </div>
+
+  <!-- Background raindrops container -->
+  <div id="raindrops" aria-hidden="true"></div>
+  <!-- Floating bubbles container -->
+  <div id="bubbles" aria-hidden="true"></div>
+
+  <script>
+    const boardElement = document.getElementById('board');
+    const statusElement = document.getElementById('status');
+    const restartBtn = document.getElementById('restartBtn');
+    const playerXScoreEl = document.getElementById('playerXScore');
+    const playerOScoreEl = document.getElementById('playerOScore');
+    const drawScoreEl = document.getElementById('drawScore');
+    const modeRadios = document.querySelectorAll('input[name="mode"]');
+    const themeButtons = document.querySelectorAll('#themeButtons button');
+    const body = document.body;
+    const bubblesContainer = document.getElementById('bubbles');
+    const raindropsContainer = document.getElementById('raindrops');
+
+    let board = Array(9).fill('');
+    let currentPlayer = 'X';
+    let gameOver = false;
+    let mode = 'single';
+    let scores = { X: 0, O: 0, draws: 0 };
+
+    const winningCombinations = [
+      [0,1,2], [3,4,5], [6,7,8],
+      [0,3,6], [1,4,7], [2,5,8],
+      [0,4,8], [2,4,6]
+    ];
+
+    function createBoard() {
+      boardElement.innerHTML = '';
+      for(let i=0; i<9; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.setAttribute('data-index', i);
+        cell.setAttribute('role', 'button');
+        cell.setAttribute('tabindex', '0');
+        cell.addEventListener('click', onCellClick);
+        cell.addEventListener('keydown', e => {
+          if(e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onCellClick(e);
+          }
+        });
+        boardElement.appendChild(cell);
+      }
+    }
+
+    function onCellClick(e) {
+      if(gameOver) return;
+
+      const idx = +e.target.getAttribute('data-index');
+      if(board[idx] !== '') return;
+
+      if (mode === 'multi') {
+        makeMove(idx, currentPlayer);
+        if(!gameOver) {
+          currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+          statusElement.textContent = `Player ${currentPlayer}'s turn`;
+        }
+      } else {
+        // single player mode
+        if(currentPlayer !== 'X') return;
+        makeMove(idx, 'X');
+        if(!gameOver) {
+          currentPlayer = 'O';
+          statusElement.textContent = "AI's turn...";
+          setTimeout(() => {
+            aiMove();
+          }, 350);
+        }
+      }
+    }
+
+    function makeMove(index, player) {
+      board[index] = player;
+      updateBoardCell(index, player);
+
+      const winner = checkWinner(board);
+      if(winner) {
+        gameOver = true;
+        highlightWin(winner.indices);
+        statusElement.textContent = (winner.player === 'X') ? 
+          (mode === 'single' ? 'You Win! 🎉' : 'Player X Wins! 🎉') :
+          (mode === 'single' ? 'AI Wins! 🤖' : 'Player O Wins! 🎉');
+        if(winner.player === 'X') scores.X++;
+        else scores.O++;
+        updateScores();
+        return;
+      }
+
+      if(isBoardFull(board)) {
+        gameOver = true;
+        statusElement.textContent = 'Draw! 🤝';
+        scores.draws++;
+        updateScores();
+        return;
+      }
+    }
+
+    function updateBoardCell(idx, val) {
+      const cell = boardElement.querySelector(`.cell[data-index='${idx}']`);
+      cell.textContent = val;
+      cell.classList.add('placed');
+      cell.addEventListener('animationend', () => {
+        cell.classList.remove('placed');
+      }, { once: true });
+    }
+
+    function updateBoard() {
+      board.forEach((val, idx) => {
+        const cell = boardElement.querySelector(`.cell[data-index='${idx}']`);
+        cell.textContent = val;
+        cell.classList.remove('winning');
+      });
+    }
+
+    function highlightWin(indices) {
+      indices.forEach(i => {
+        const cell = boardElement.querySelector(`.cell[data-index='${i}']`);
+        cell.classList.add('winning');
+      });
+    }
+
+    function checkWinner(bd) {
+      for(const combo of winningCombinations) {
+        const [a,b,c] = combo;
+        if(bd[a] && bd[a] === bd[b] && bd[a] === bd[c]) {
+          return { player: bd[a], indices: combo };
+        }
+      }
+      return null;
+    }
+
+    function isBoardFull(bd) {
+      return bd.every(cell => cell !== '');
+    }
+
+    // AI using minimax
+    function aiMove() {
+      let bestScore = -Infinity;
+      let move = -1;
+      for(let i=0; i<9; i++) {
+        if(board[i] === '') {
+          board[i] = 'O';
+          let score = minimax(board, 0, false);
+          board[i] = '';
+          if(score > bestScore) {
+            bestScore = score;
+            move = i;
+          }
+        }
+      }
+      makeMove(move, 'O');
+      if(!gameOver) {
+        currentPlayer = 'X';
+        statusElement.textContent = "Your turn (X)";
+      }
+    }
+
+    function minimax(bd, depth, isMaximizing) {
+      let winner = checkWinner(bd);
+      if(winner) {
+        if(winner.player === 'O') return 10 - depth;
+        else if(winner.player === 'X') return depth - 10;
+      }
+      if(isBoardFull(bd)) return 0;
+
+      if(isMaximizing) {
+        let bestScore = -Infinity;
+        for(let i=0; i<9; i++) {
+          if(bd[i] === '') {
+            bd[i] = 'O';
+            let score = minimax(bd, depth+1, false);
+            bd[i] = '';
+            bestScore = Math.max(score, bestScore);
+          }
+        }
+        return bestScore;
+      } else {
+        let bestScore = Infinity;
+        for(let i=0; i<9; i++) {
+          if(bd[i] === '') {
+            bd[i] = 'X';
+            let score = minimax(bd, depth+1, true);
+            bd[i] = '';
+            bestScore = Math.min(score, bestScore);
+          }
+        }
+        return bestScore;
+      }
+    }
+
+    function restartGame() {
+      board = Array(9).fill('');
+      gameOver = false;
+      currentPlayer = 'X';
+      updateBoard();
+      statusElement.textContent = mode === 'single' ? "Your turn (X)" : "Player X's turn";
+    }
+
+    function updateScores() {
+      playerXScoreEl.textContent = scores.X;
+      playerOScoreEl.textContent = scores.O;
+      drawScoreEl.textContent = scores.draws;
+    }
+
+    function switchMode(newMode) {
+      mode = newMode;
+      restartGame();
+    }
+
+    // Theme switching buttons
+    themeButtons.forEach(btn => {
+      btn.addEventListener('click', e => {
+        const selectedTheme = btn.getAttribute('data-theme');
+        if(selectedTheme === 'default') {
+          body.removeAttribute('data-theme');
+        } else {
+          body.setAttribute('data-theme', selectedTheme);
+        }
+        themeButtons.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+      });
+    });
+
+    // Mode change event
+    modeRadios.forEach(radio => {
+      radio.addEventListener('change', e => {
+        switchMode(e.target.value);
+      });
+    });
+
+    restartBtn.addEventListener('click', restartGame);
+
+    // Initialize
+    createBoard();
+    restartGame();
+    updateScores();
+
+    // Bubble animation and interaction
+
+    const bubbleCount = 40;
+    let bubbles = [];
+
+    function randomRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function createBubbles() {
+      for(let i=0; i<bubbleCount; i++) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble');
+        resetBubble(bubble);
+
+        // Add hover & click interaction handlers
+        bubble.addEventListener('click', () => {
+          if(bubble.classList.contains('popping')) return; // avoid multiple clicks
+          bubble.classList.add('popping');
+          bubble.addEventListener('animationend', () => {
+            resetBubble(bubble);
+            bubble.classList.remove('popping');
+          }, { once: true });
+        });
+
+        bubblesContainer.appendChild(bubble);
+        bubbles.push(bubble);
+      }
+    }
+
+    function resetBubble(bubble) {
+      const size = randomRange(10, 30);
+      bubble.style.width = `${size}px`;
+      bubble.style.height = `${size}px`;
+      bubble.style.left = `${randomRange(0, 100)}vw`;
+      bubble.style.top = `${randomRange(100, 120)}vh`;
+      const duration = randomRange(20, 40);
+      bubble.style.animation = `floatUp ${duration}s linear infinite`;
+      bubble.style.animationDelay = `${randomRange(0, duration)}s`;
+      bubble.style.opacity = 0.15;
+      bubble.style.zIndex = 1;
+      bubble.style.pointerEvents = 'auto';
+    }
+
+    // Observe theme changes to recreate bubbles for color update
+    const observer = new MutationObserver(() => {
+      bubbles.forEach(b => bubblesContainer.removeChild(b));
+      bubbles = [];
+      createBubbles();
+    });
+
+    observer.observe(body, { attributes: true, attributeFilter: ['data-theme'] });
+
+    createBubbles();
+
+    // Raindrop animation
+
+    const raindropCount = 100;
+    let raindrops = [];
+
+    function createRaindrops() {
+      for(let i=0; i<raindropCount; i++) {
+        const drop = document.createElement('div');
+        drop.classList.add('raindrop');
+
+        resetRaindrop(drop);
+
+        raindropsContainer.appendChild(drop);
+        raindrops.push(drop);
+      }
+    }
+
+    function resetRaindrop(drop) {
+      const x = randomRange(0, window.innerWidth);
+      const delay = randomRange(0, 30);
+      const duration = randomRange(4, 8);
+      const swayDuration = randomRange(1, 3);
+      const size = randomRange(1, 3);
+
+      drop.style.left = `${x}px`;
+      drop.style.width = `${size}px`;
+      drop.style.height = `${size * 7}px`; // length relative to width
+      drop.style.animationDuration = `${duration}s, ${swayDuration}s`;
+      drop.style.animationDelay = `${delay}s, ${delay}s`;
+      drop.style.opacity = 0.3;
+    }
+
+    createRaindrops();
+
+    // Optional: Reset raindrops on window resize
+    window.addEventListener('resize', () => {
+      raindrops.forEach(drop => {
+        resetRaindrop(drop);
+      });
+    });
+
+  </script>
+
+  <style>
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.15;
+      }
+      50% {
+        opacity: 0.25;
+      }
+      100% {
+        transform: translateY(-120vh) scale(1.1);
+        opacity: 0;
+      }
+    }
+  </style>
+</body>
+</html>
