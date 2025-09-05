@@ -14,6 +14,8 @@ Built using **HTML, CSS, and JavaScript**.
 - 🏆 Winner & draw detection  
 - 🔄 Restart option  
 - 📱 Responsive design (works on mobile & desktop)  
+## 📷 Screenshots
+![Tic Tac Toe Screenshot](screenshot.png)
 
 ---
 
